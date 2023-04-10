@@ -10,6 +10,9 @@
     let y_col : number = 4;
     const gameBorderPadding = 0;
     let component;
+    let gameBorder;
+
+    let gameover = false;
 
 
     function onKeyDown(e) {
@@ -62,7 +65,14 @@ function moovesnake(){
   
 
 }
-setInterval(moovesnake,50)
+const interval = setInterval(
+  ()=>{
+if(!gameover){
+moovesnake()}
+else {clearInterval(interval);}
+
+},50)
+
 $:moovesnake(x_direction)
 
 function randomIntFromInterval(min, max) { // min and max included 
@@ -78,31 +88,46 @@ function Chicken(){
 
 // this is the collision logic
 
-$: if (component){
-  component.style.top = x_top + 'px'
-  component.style.left = x_value + 'px'
-  console.log(component.style.top, component.style.left)}
 
-  let gameBorder;
+
 
   const checkCollision = () => {
     const componentRect = component.getBoundingClientRect();
     const gameBorderRect = gameBorder.getBoundingClientRect();
     if (
       componentRect.left < gameBorderRect.left  ||
-      componentRect.right > gameBorderRect.right + 56 ||
+      componentRect.right > gameBorderRect.right + 100 ||
       componentRect.top < gameBorderRect.top  ||
       componentRect.bottom > gameBorderRect.bottom + 56
     ) {
+       gameover = true;
       alert('Game over!');
+      resetGame()
+
     }
   };
 
   onMount(() => {
     gameBorder = document.querySelector('.gameborder');
-    setInterval(checkCollision, 50);
-  });
+    let interval = setInterval(
+        ()=>{
+          if(!gameover){
+            checkCollision()}
+        else {clearInterval(interval)
+              resetGame()}
 
+              },50)
+              });
+
+  function resetGame() {
+  x_value = 0;
+  x_top = 0;
+  x_direction = "";
+  angle = 0;
+  rotation = false;
+  gameover = false;
+    }
+  
 </script>
 
 
@@ -116,6 +141,13 @@ $: if (component){
         <div class={Chicken()} ></div>
 
     </div>
-    
+    {#if gameover}
+    <div class="absolute top-0 left-0 w-full h-full flex justify-center items-center">
+      <div class="bg-white p-4 rounded-md shadow-md">
+        <h2 class="text-xl font-bold mb-2">Game Over</h2>
+        <button class="px-4 py-2 bg-blue-500 text-white rounded-md" on:click={resetGame}>Restart Game</button>
+      </div>
+    </div>
+  {/if}
 </body>
 <svelte:window on:keydown={onKeyDown}  />
