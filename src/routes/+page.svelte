@@ -5,6 +5,8 @@
     let x_direction : string = ""
     let angle : number = 0 ;
     let rotation : boolean = false;
+    let x_row : number = 2;
+    let y_col : number = randomIntFromInterval(1, 6);
 
     function onKeyDown(e) {
 
@@ -54,15 +56,21 @@ function moovesnake(){
     x_top-=16
   }
   
-  
-  
-  
-  
-  
 
 }
 setInterval(moovesnake,50)
 $:moovesnake(x_direction)
+
+function randomIntFromInterval(min, max) { // min and max included 
+  return Math.floor(Math.random() * (max - min + 1) + min)
+}
+$:Chicken(x_row,y_col)
+
+function Chicken(){
+  let y_col : number = randomIntFromInterval(1, 6)
+  let x_row : number = randomIntFromInterval(1, 6)
+  return `border border-red-800 h-11 w-11 row-start-${x_row} self-center col-start-${y_col} place-self-center`
+}
 </script>
 
 
@@ -70,9 +78,10 @@ $:moovesnake(x_direction)
     <div class="gameborder grid grid-rows-6 grid-cols-6 bg-emerald-200  h-2/3 w-1/2 self-center ">
         <div class="flex flex-row relative" style="left: {x_value}px; top: {x_top}px" on:keydown={onKeyDown}  >
             <Component angle={angle} rotation={rotation}/>
+           
 
         </div>
-
+        <div class={Chicken()} ></div>
 
     </div>
     
