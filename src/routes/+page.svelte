@@ -1,6 +1,8 @@
 <script lang="ts">
     import Component from "./component.svelte";
     import { writable } from 'svelte/store';
+    import fried from '$lib/assets/fried.png';
+
 
     import { onMount } from 'svelte';
     let x_value : number = 0
@@ -152,6 +154,8 @@ let colStart = 200;
               });
 
   function resetGame() {
+  bodynumber=0
+  hit =false;
   x_value = 0;
   x_top = 0;
   x_direction = "";
@@ -165,12 +169,14 @@ let colStart = 200;
 
 <body class="body h-screen w-screen flex flex-row justify-center ">
     <div class="gameborder grid grid-rows-6 grid-cols-6 bg-emerald-200  h-2/3 w-1/2 self-center ">
+      
         <div class="flex flex-row relative" style="left: {x_value}px; top: {x_top}px" on:keydown={onKeyDown} bind:this={component}  >
             <Component angle={angle} rotation={rotation} hit={hit} bodynumber={bodynumber}/>
            
 
         </div>
-        <div class={Chicken()} style= "left: {rowStart}px; top: {colStart}px">okay</div>
+        <div class={Chicken()} style= "left: {rowStart}px; top: {colStart}px">
+          <img src={fried} alt="fried chicken" ></div>
 
     </div>
     

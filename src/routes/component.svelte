@@ -15,5 +15,6 @@
 {/each}
 
 {/if}
-<img alt="tahalkobra" src={logo} class={`w-12 h-12 ${rotation ? '-rotate-90' :`rotate-${angle}`}`} />
+<img alt="tahalkobra" src={logo} style={`width: 48px; height: 48px; transform: rotate(${rotation ? '-90deg' : `${angle}deg`})`}
+/>
 
