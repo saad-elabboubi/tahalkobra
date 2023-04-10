@@ -3,7 +3,6 @@
     import { writable } from 'svelte/store';
     import fried from '$lib/assets/fried.png';
 
-
     import { onMount } from 'svelte';
     let x_value : number = 0
     let x_top : number = 0 
