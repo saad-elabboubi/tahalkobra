@@ -11,6 +11,7 @@
     const gameBorderPadding = 0;
     let component;
     let gameBorder;
+    let chicken
 
     let gameover = false;
 
@@ -83,7 +84,7 @@ $:Chicken(x_row,y_col)
 function Chicken(){
   let y_col : number = randomIntFromInterval(1, 6)
   let x_row : number = randomIntFromInterval(1, 6)
-  return `border border-red-800 h-11 w-11 row-start-${x_row} self-center col-start-${y_col} place-self-center`
+  return `chicken border border-red-800 h-11 w-11 row-start-${x_row} self-center col-start-${y_col} place-self-center`
 }
 
 // this is the collision logic
@@ -94,6 +95,7 @@ function Chicken(){
   const checkCollision = () => {
     const componentRect = component.getBoundingClientRect();
     const gameBorderRect = gameBorder.getBoundingClientRect();
+    const chickenRect=chicken.getBoundingClientRect();
     if (
       componentRect.left < gameBorderRect.left  ||
       componentRect.right > gameBorderRect.right + 100 ||
@@ -105,10 +107,21 @@ function Chicken(){
       resetGame()
 
     }
-  };
+  else if (
+    componentRect.left <= chickenRect.right &&
+    componentRect.right >= chickenRect.left &&
+    componentRect.top <= chickenRect.bottom &&
+    componentRect.bottom >= chickenRect.top
+  ) {
+
+  
+  {console.log("hitted")}
+  };}
 
   onMount(() => {
     gameBorder = document.querySelector('.gameborder');
+    chicken = document.querySelector('.chicken');
+
     let interval = setInterval(
         ()=>{
           if(!gameover){
@@ -141,13 +154,6 @@ function Chicken(){
         <div class={Chicken()} ></div>
 
     </div>
-    {#if gameover}
-    <div class="absolute top-0 left-0 w-full h-full flex justify-center items-center">
-      <div class="bg-white p-4 rounded-md shadow-md">
-        <h2 class="text-xl font-bold mb-2">Game Over</h2>
-        <button class="px-4 py-2 bg-blue-500 text-white rounded-md" on:click={resetGame}>Restart Game</button>
-      </div>
-    </div>
-  {/if}
+    
 </body>
 <svelte:window on:keydown={onKeyDown}  />
