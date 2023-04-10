@@ -1,5 +1,7 @@
 <script lang="ts">
     import Component from "./component.svelte";
+    import { writable } from 'svelte/store';
+
     import { onMount } from 'svelte';
     let x_value : number = 0
     let x_top : number = 0 
@@ -9,11 +11,16 @@
     let x_row : number = 2;
     let y_col : number = 4;
     const gameBorderPadding = 0;
+    let chickenX = 6;
+    let chickenY = 3;   
     let component;
     let gameBorder;
-    let chicken
-
+    let chicken;
+    let classchicken;
+    let value;
+    let hit =false;
     let gameover = false;
+    let bodynumber=0;
 
 
     function onKeyDown(e) {
@@ -79,16 +86,22 @@ $:moovesnake(x_direction)
 function randomIntFromInterval(min, max) { // min and max included 
   return Math.floor(Math.random() * (max - min + 1) + min)
 }
-$:Chicken(x_row,y_col)
+let rowStart = 200;
+let colStart = 200;
 
-function Chicken(){
-  let y_col : number = randomIntFromInterval(1, 6)
-  let x_row : number = randomIntFromInterval(1, 6)
-  return `chicken border border-red-800 h-11 w-11 row-start-${x_row} self-center col-start-${y_col} place-self-center`
+
+ let Chicken = () => {
+  return `chicken border border-red-800 h-11 w-11  self-center  place-self-center relative`
+ 
+  
+
 }
 
-// this is the collision logic
 
+
+//col-start-${n2}
+//row-start-${n1}
+// this is the collision logic
 
 
 
@@ -103,6 +116,7 @@ function Chicken(){
       componentRect.bottom > gameBorderRect.bottom + 56
     ) {
        gameover = true;
+       hit=false
       alert('Game over!');
       resetGame()
 
@@ -114,8 +128,12 @@ function Chicken(){
     componentRect.bottom >= chickenRect.top
   ) {
 
+   hit = true
+   bodynumber+=1 
+   console.log(bodynumber)
+   rowStart = randomIntFromInterval(50,400);
+   colStart = randomIntFromInterval(50,400);
   
-  {console.log("hitted")}
   };}
 
   onMount(() => {
@@ -125,7 +143,8 @@ function Chicken(){
     let interval = setInterval(
         ()=>{
           if(!gameover){
-            checkCollision()}
+            checkCollision()
+            }
         else {clearInterval(interval)
               resetGame()}
 
@@ -147,11 +166,11 @@ function Chicken(){
 <body class="body h-screen w-screen flex flex-row justify-center ">
     <div class="gameborder grid grid-rows-6 grid-cols-6 bg-emerald-200  h-2/3 w-1/2 self-center ">
         <div class="flex flex-row relative" style="left: {x_value}px; top: {x_top}px" on:keydown={onKeyDown} bind:this={component}  >
-            <Component angle={angle} rotation={rotation}/>
+            <Component angle={angle} rotation={rotation} hit={hit} bodynumber={bodynumber}/>
            
 
         </div>
-        <div class={Chicken()} ></div>
+        <div class={Chicken()} style= "left: {rowStart}px; top: {colStart}px">okay</div>
 
     </div>
     
