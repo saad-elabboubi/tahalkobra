@@ -1,6 +1,7 @@
 <script lang="ts">
     import fried from '$lib/assets/fried.png';
     import logo from '$lib/assets/taha_lkobra.jpg';
+    import tahaloose from '$lib/assets/gametaha.jpeg';
 
     import { onMount } from 'svelte';
     let x_direction : string = ""
@@ -23,6 +24,9 @@
     let prevHeadY = 0;
     let score = 0;
     let highscore=0;
+    let popimage=false;
+    let interval;
+
 
     // Initialize the head position
       let x_value = 100;
@@ -74,6 +78,23 @@ function onKeyDown(e) {
   }
 }
 
+$: {
+  if (!popimage) {
+    if (interval) clearInterval(interval);
+    interval = setInterval(() => {
+      if (!gameover) {
+        moovesnake();
+        checkSelfCollision();
+        checkCollision();
+      } else {
+        clearInterval(interval);
+        resetGame(); // No need to call handlePlayAgain() here
+      }
+    }, 50);
+  }
+}
+
+
   
  function moovesnake() {
   const prevHeadX = x_value;
@@ -106,13 +127,8 @@ function onKeyDown(e) {
 
 
 
-const interval = setInterval(
-  ()=>{
-if(!gameover){
-moovesnake()}
-else {clearInterval(interval);}
 
-},50)
+
 
 
 function randomIntFromInterval(min, max) { // min and max included 
@@ -123,7 +139,7 @@ let colStart = 200;
 
 
  let Chicken = () => {
-  return `chicken border border-red-800 h-11 w-11  self-center  place-self-center relative`
+  return `chicken border h-16 w-16 self-center  place-self-center relative`
  
   
 
@@ -154,8 +170,7 @@ function checkSelfCollision() {
     ) {
       gameover = true;
       hit = false;
-      alert('Game over!');
-      resetGame();
+      popimage = true;
       break;
     }
   }
@@ -166,7 +181,9 @@ function checkSelfCollision() {
 
 
 
+
   const checkCollision = () => {
+    if (!component) return;
     const componentRect = component.getBoundingClientRect();
     const gameBorderRect = gameBorder.getBoundingClientRect();
     const chickenRect=chicken.getBoundingClientRect();
@@ -178,7 +195,8 @@ function checkSelfCollision() {
       ){
        gameover = true;
        hit=false
-      alert('Game over!');
+
+      popimage=true;
       resetGame()
 
     }
@@ -190,7 +208,8 @@ function checkSelfCollision() {
   ) {
 
    hit = true
-   bodynumber+=1 
+   bodynumber+=1
+   if(!popimage){ 
    if(score>=highscore){
     highscore=score+1
     score+=1
@@ -199,6 +218,7 @@ function checkSelfCollision() {
    else{
     score+=1
    }
+  }
 
    rowStart = randomIntFromInterval(50,400);
    colStart = randomIntFromInterval(50,400);
@@ -208,67 +228,87 @@ function checkSelfCollision() {
   }
 
 }
+onMount(() => {
+  gameBorder = document.querySelector('.gameborder');
+  chicken = document.querySelector('.chicken');
 
-  onMount(() => {
-    gameBorder = document.querySelector('.gameborder');
-    chicken = document.querySelector('.chicken');
 
-    let interval = setInterval(
-        ()=>{
-          if(!gameover){
-            checkSelfCollision();
+  let interval = setInterval(
+    ()=>{
+      if(!gameover){
+        checkSelfCollision();
+        checkCollision();
+      } else {
+        clearInterval(interval);
+        resetGame();
+      }
+    }, 50)
+});
 
-            checkCollision();
-            }
-        else {clearInterval(interval)
-              resetGame()}
 
-              },50)
-              });
+function resetGame() {
+  if (score > highscore) {
+    highscore = score;
+  }
 
-  function resetGame() {
   bodynumber = 0;
-   x_value = 100;
-   x_top = 100;
+  x_value = 100;
+  x_top = 100;
   hit = false;
   x_direction = "";
   angle = 0;
   rotation = false;
   gameover = false;
-  score=0
+  score = 0;
   bodyParts = [];
 }
 
 
+
+function handlePlayAgain() {
+  console.log("handleplayer"+ "/"+ popimage)
+
+  resetGame();
+  popimage = false;
+
+}
+
+
 </script>
+
 <body class="body h-screen w-screen flex flex-row justify-center bg-gray-900">
   <div class="score flex items-center justify-center text-white font-bold text-1xl bg-gray-800 h-16 w-full fixed top-0">
     <div class="mx-32">Score: {score}</div>
     <div class="mx-32">High Score: {highscore}</div>
   </div>
-  <div class="gameborder grid grid-rows-6 grid-cols-6 bg-gradient-to-br from-sky-300 to-sky-100 rounded-lg h-2/3 w-2/3 self-center">
-
+  {#if popimage}
+  <div class="gameover flex items-center justify-center flex-col">
+    <img src={tahaloose} alt="you loose" class="w-2/3 md:w-1/3 my-8">
+    <button class="btn bg-blue-500 text-white rounded-lg px-4 py-2 my-4" on:click={handlePlayAgain}>Play Again</button>
+  </div>
+  {/if}
+  <div class={`gameborder grid grid-rows-6 grid-cols-6 bg-gradient-to-br from-sky-300 to-sky-100 rounded-lg h-2/3 w-2/3 self-center ${popimage ? 'hidden' : ''}`}>
     <div class="snake-container relative" on:keydown={onKeyDown} style={`left: ${x_value}px; top: ${x_top}px`}>
       {#each bodyParts as part, i (i)}
       <div
         class={`snake-body-part w-12 h-12 absolute rounded-full ${i % 2 === 0 ? 'bg-green-700' : 'bg-green-500'}`}
         style={`left: ${part.x - x_value}px; top: ${part.y - x_top}px`}
       ></div>
-    {/each}
-    <img
-    alt="tahalkobra"
-    class="lkobra"
-    src={logo}
-    style={`width: 48px; height: 48px; transform: rotate(${rotation ? '-90deg' : `${angle}deg`}); z-index: 10; border-radius: 8px; box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.3);`}
-    bind:this={component}
-  />
-  
+      {/each}
+      <img
+        alt="tahalkobra"
+        class="lkobra"
+        src={logo}
+        style={`width: 48px; height: 48px; transform: rotate(${rotation ? '-90deg' : `${angle}deg`}); z-index: 10; border-radius: 8px; box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.3);`}
+        bind:this={component}
+      />
     </div>
     <div class={Chicken()} style="left: {rowStart}px; top: {colStart}px">
-      <img src={fried} alt="fried chicken" ></div>
+      <img src={fried} alt="fried chicken"  ></div>
   </div>
 </body>
 
 <svelte:window on:keydown={onKeyDown}  />
+
 
 
