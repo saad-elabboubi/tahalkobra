@@ -33,37 +33,45 @@
 ];
 
 
-    function onKeyDown(e) {
-
-    switch(e.keyCode) {
-      case 39:
-      x_direction="right"
-      rotation = false;
-      angle = 0;
+function onKeyDown(e) {
+  switch(e.keyCode) {
+    case 39:
+      if (x_direction !== "left") {
+        x_direction = "right";
+        rotation = false;
+        angle = 0;
+      }
       break;
 
-     case 40:
-      x_direction="down"
-      rotation = false;
-      angle = 90;
+    case 40:
+      if (x_direction !== "up") {
+        x_direction = "down";
+        rotation = false;
+        angle = 90;
+      }
       break;
 
-      case 38:
-        x_direction="up"
+    case 38:
+      if (x_direction !== "down") {
+        x_direction = "up";
         rotation = true;
         angle = 90;
-        break;
-
-      case 37: 
-      x_direction="left"
-      rotation = false;
-      angle = 180;
+      }
       break;
 
-      default:
-        break;
-    }
+    case 37:
+      if (x_direction !== "right") {
+        x_direction = "left";
+        rotation = false;
+        angle = 180;
+      }
+      break;
+
+    default:
+      break;
   }
+}
+
   
  function moovesnake() {
   const prevHeadX = x_value;
