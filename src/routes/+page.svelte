@@ -21,6 +21,8 @@
     let bodynumber=0;
     let prevHeadX = 0;
     let prevHeadY = 0;
+    let score = 0;
+    let highscore=0;
 
     // Initialize the head position
       let x_value = 100;
@@ -189,6 +191,14 @@ function checkSelfCollision() {
 
    hit = true
    bodynumber+=1 
+   if(score>=highscore){
+    highscore=score+1
+    score+=1
+
+   }
+   else{
+    score+=1
+   }
 
    rowStart = randomIntFromInterval(50,400);
    colStart = randomIntFromInterval(50,400);
@@ -218,26 +228,41 @@ function checkSelfCollision() {
 
   function resetGame() {
   bodynumber = 0;
+   x_value = 100;
+   x_top = 100;
   hit = false;
-  x_value = 0;
-  x_top = 0;
   x_direction = "";
   angle = 0;
   rotation = false;
   gameover = false;
+  score=0
   bodyParts = [];
 }
 
 
 </script>
-<body class="body h-screen w-screen flex flex-row justify-center ">
-  <div class="gameborder grid grid-rows-6 grid-cols-6 bg-emerald-200 h-2/3 w-2/3 self-center ">
+<body class="body h-screen w-screen flex flex-row justify-center bg-gray-900">
+  <div class="score flex items-center justify-center text-white font-bold text-1xl bg-gray-800 h-16 w-full fixed top-0">
+    <div class="mx-32">Score: {score}</div>
+    <div class="mx-32">High Score: {highscore}</div>
+  </div>
+  <div class="gameborder grid grid-rows-6 grid-cols-6 bg-gradient-to-br from-sky-300 to-sky-100 rounded-lg h-2/3 w-2/3 self-center">
+
     <div class="snake-container relative" on:keydown={onKeyDown} style={`left: ${x_value}px; top: ${x_top}px`}>
       {#each bodyParts as part, i (i)}
-        <div class="border bg-blue-800 w-12 h-12 absolute" style={`left: ${part.x - x_value}px; top: ${part.y - x_top}px`}></div>
-        {/each}
-
-      <img alt="tahalkobra" class="lkobra" src={logo} style={`width: 48px; height: 48px; transform: rotate(${rotation ? '-90deg' : `${angle}deg`}); z-index: 10;`} bind:this={component} />
+      <div
+        class={`snake-body-part w-12 h-12 absolute rounded-full ${i % 2 === 0 ? 'bg-green-700' : 'bg-green-500'}`}
+        style={`left: ${part.x - x_value}px; top: ${part.y - x_top}px`}
+      ></div>
+    {/each}
+    <img
+    alt="tahalkobra"
+    class="lkobra"
+    src={logo}
+    style={`width: 48px; height: 48px; transform: rotate(${rotation ? '-90deg' : `${angle}deg`}); z-index: 10; border-radius: 8px; box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.3);`}
+    bind:this={component}
+  />
+  
     </div>
     <div class={Chicken()} style="left: {rowStart}px; top: {colStart}px">
       <img src={fried} alt="fried chicken" ></div>
