@@ -28,9 +28,9 @@
 
       // Initialize the bodyParts array with two body elements
       let bodyParts = [
-        { x: x_value - 24, y: x_top },
-        { x: x_value - 32, y: x_top },
-      ];
+  { x: x_value - 48, y: x_top },
+  { x: x_value - 64, y: x_top },
+];
 
 
     function onKeyDown(e) {
@@ -190,11 +190,11 @@ let colStart = 200;
 <body class="body h-screen w-screen flex flex-row justify-center ">
   <div class="gameborder grid grid-rows-6 grid-cols-6 bg-emerald-200 h-2/3 w-1/2 self-center ">
     <div class="snake-container relative" on:keydown={onKeyDown} style={`left: ${x_value}px; top: ${x_top}px`}>
-      <img alt="tahalkobra" src={logo} style={`width: 48px; height: 48px; transform: rotate(${rotation ? '-90deg' : `${angle}deg`}); z-index: 1;`} bind:this={component} />
-
-      {#each bodyParts as part}
+      {#each bodyParts as part, i (i)}
         <div class="border bg-blue-800 w-12 h-12 absolute" style={`left: ${part.x - x_value}px; top: ${part.y - x_top}px`}></div>
-      {/each}
+        {/each}
+
+      <img alt="tahalkobra" class="lkobra" src={logo} style={`width: 48px; height: 48px; transform: rotate(${rotation ? '-90deg' : `${angle}deg`}); z-index: 10;`} bind:this={component} />
     </div>
     <div class={Chicken()} style="left: {rowStart}px; top: {colStart}px">
       <img src={fried} alt="fried chicken" ></div>
