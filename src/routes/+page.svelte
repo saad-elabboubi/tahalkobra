@@ -120,6 +120,39 @@ let colStart = 200;
 }
 
 // this is the collision logic
+function checkSelfCollision() {
+  const headRect = {
+    left: x_value + 18,
+    right: x_value + 30,
+    top: x_top + 18,
+    bottom: x_top + 30
+  };
+
+  for (let i = 4; i < bodyParts.length; i++) {
+    const bodyRect = {
+      left: bodyParts[i].x,
+      right: bodyParts[i].x + 12,
+      top: bodyParts[i].y,
+      bottom: bodyParts[i].y + 12
+    };
+
+    if (
+      headRect.left <= bodyRect.right &&
+      headRect.right >= bodyRect.left &&
+      headRect.top <= bodyRect.bottom &&
+      headRect.bottom >= bodyRect.top
+    ) {
+      gameover = true;
+      hit = false;
+      alert('Game over!');
+      resetGame();
+      break;
+    }
+  }
+}
+
+
+
 
 
 
@@ -127,12 +160,12 @@ let colStart = 200;
     const componentRect = component.getBoundingClientRect();
     const gameBorderRect = gameBorder.getBoundingClientRect();
     const chickenRect=chicken.getBoundingClientRect();
-    if (
-      componentRect.left < gameBorderRect.left  ||
-      componentRect.right > gameBorderRect.right + 8 ||
-      componentRect.top < gameBorderRect.top  ||
-      componentRect.bottom > gameBorderRect.bottom + 56
-    ) {
+          if (
+        componentRect.left < gameBorderRect.left  ||
+        componentRect.right  > gameBorderRect.right + 12 ||
+        componentRect.top < gameBorderRect.top  ||
+        componentRect.bottom  > gameBorderRect.bottom+12
+      ){
        gameover = true;
        hit=false
       alert('Game over!');
@@ -165,7 +198,9 @@ let colStart = 200;
     let interval = setInterval(
         ()=>{
           if(!gameover){
-            checkCollision()
+            checkSelfCollision();
+
+            checkCollision();
             }
         else {clearInterval(interval)
               resetGame()}
@@ -188,7 +223,7 @@ let colStart = 200;
 
 </script>
 <body class="body h-screen w-screen flex flex-row justify-center ">
-  <div class="gameborder grid grid-rows-6 grid-cols-6 bg-emerald-200 h-2/3 w-1/2 self-center ">
+  <div class="gameborder grid grid-rows-6 grid-cols-6 bg-emerald-200 h-2/3 w-2/3 self-center ">
     <div class="snake-container relative" on:keydown={onKeyDown} style={`left: ${x_value}px; top: ${x_top}px`}>
       {#each bodyParts as part, i (i)}
         <div class="border bg-blue-800 w-12 h-12 absolute" style={`left: ${part.x - x_value}px; top: ${part.y - x_top}px`}></div>
