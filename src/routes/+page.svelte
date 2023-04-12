@@ -26,6 +26,8 @@
     let highscore=0;
     let popimage=false;
     let interval;
+    let gameOverMessage = '';
+
 
 
     // Initialize the head position
@@ -88,6 +90,7 @@ $: {
         checkCollision();
       } else {
         clearInterval(interval);
+
         resetGame(); // No need to call handlePlayAgain() here
       }
     }, 50);
@@ -197,6 +200,8 @@ function checkSelfCollision() {
        hit=false
 
       popimage=true;
+      displayGameOverMessage(); // Display the game over message letter by letter
+
       resetGame()
 
     }
@@ -261,19 +266,27 @@ function resetGame() {
   gameover = false;
   score = 0;
   bodyParts = [];
+  gameOverMessage = ''; // Reset the game over message
+
 }
 
 
 
 function handlePlayAgain() {
-  console.log("handleplayer"+ "/"+ popimage)
 
   resetGame();
   popimage = false;
 
 }
 
-
+async function displayGameOverMessage() {
+  const message = ' Taha lkobra kber mcha lghorba ghber';
+  const delay = 100; // Delay between each letter in milliseconds
+  for (let i = 0; i < message.length; i++) {
+    gameOverMessage += message[i];
+    await new Promise(resolve => setTimeout(resolve, delay));
+  }
+}
 </script>
 
 <body class="body h-screen w-screen flex flex-row justify-center bg-gray-900">
@@ -284,6 +297,8 @@ function handlePlayAgain() {
   {#if popimage}
   <div class="gameover flex items-center justify-center flex-col">
     <img src={tahaloose} alt="you loose" class="w-2/3 md:w-1/3 my-8">
+    <div class="text-2xl text-white font-serif	 mb-4 animate-pulse ">{gameOverMessage}</div>
+
     <button class="btn bg-blue-500 text-white rounded-lg px-4 py-2 my-4" on:click={handlePlayAgain}>Play Again</button>
   </div>
   {/if}
